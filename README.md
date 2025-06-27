@@ -1,6 +1,6 @@
 # DL_BrainAge_CoPath
 
-A deep‑learning pipeline for predicting brain age from structural MRI and dissecting the impact of Alzheimer’s disease (AD), Lewy‑body (LB) pathology, and their co‑occurrence on accelerated brain ageing.
+A deep learning pipeline for predicting brain age from structural MRI and dissecting the impact of Alzheimer’s disease (AD), Lewy‑body (LB) pathology, and their co‑occurrence on accelerated brain ageing.
 
 ---
 
