@@ -130,7 +130,7 @@ Pre‑processing is fully automated via `preprocessing/run_freesurfer_pipe.sh` p
 Please cite both the **paper** and this **software**:
 
 ```bibtex
-@article{babakian2025copath,
+@article{ahmadi2025copath,
   title   = {Lewy-body co-pathology exacerbates deep-learning brain-age and accelerates neurodegeneration},
   author  = {Ahmadi, B. et al.},
   journal = {Nature Communications},
