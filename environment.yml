@@ -1,0 +1,19 @@
+name: brainage
+channels:
+  - pytorch
+  - nvidia        # CUDA toolkit channel
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pytorch=2.1.1
+  - pytorch-cuda=12.1
+  - numpy=1.26
+  - scipy=1.11
+  - scikit-learn=1.5
+  - statsmodels=0.14
+  - pip           # lets you add extras with pip install ...
+  # ───────────── optional, uncomment if desired ─────────────
+  # - nibabel
+  # - nilearn
+  # - pandas
+  # - tqdm
