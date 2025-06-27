@@ -79,8 +79,6 @@ python src/train_brainage.py \
        --epochs 75 --batch 8 --gpu 0
 ```
 
-*Five‑fold* site‑stratified cross‑validation is enabled by default.
-
 ---
 
 ## 📊 Reproducing Manuscript Figures
