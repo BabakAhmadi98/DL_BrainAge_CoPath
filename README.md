@@ -1,150 +1,88 @@
-# DL_BrainAge_CoPath
+# DL\_BrainAge\_CoPath
 
-A deep learning pipeline for predicting brain age from structural MRI and dissecting the impact of Alzheimer’s disease (AD), Lewy‑body (LB) pathology, and their co‑occurrence on accelerated brain ageing.
-
----
-
-## 🚀 Project Overview
-
-This repository accompanies the manuscript **“Lewy‑body co‑pathology exacerbates deep‑learning brain‑age and accelerates neurodegeneration”** (In Review at Nature Communications, 2025). We:
-
-1. Train a **3‑D DenseNet** on >4k cognitively‑unimpaired (CU) T1‑w MRIs pooled from **ADNI, NACC, AIBL, CamCAN & HCP‑A** to model normative ageing.
-2. Compare brain age gap (BAG) across biomarker‑defined AD, LB, and AD+LB subgroups.
-3. Localize cortical & subcortical drivers of elevated BAG with **saliency maps**.
-4. Track longitudinal BAG & regional atrophy and relate them to cognitive decline.
-
-> **Note** All raw MRI and biomarker data remain subject to the original cohort licences. We provide links & DOI’s but do **not** redistribute the datasets.
+A compact PyTorch pipeline that predicts **brain age** from 3-D T1-weighted MRI. It is further used to quantify how combined Alzheimer’s-disease (AD) and Lewy-body (LB) pathology accelerates structural ageing.
 
 ---
 
-## 📂 Repository Structure
+## 🚀 What’s in this repo?
 
-```text
-BACPDL/
-├── src/                       # Core Python code
-│   ├── densenet3d.py          # 3‑D DenseNet architecture
-│   ├── train_brainage.py      # Training loop & cross‑validation
-│   ├── predict_brainage.py    # Inference on a pre‑processed scan
-│   ├── saliency.py            # Saliency‑map generation utilities
-│   └── utils/                 # I/O, metrics, visualization helpers
-├── demo/
-│   ├── sample_T1.nii.gz       # 1× anonymised CU scan (299 kB)
-│   └── run_demo.py            # End‑to‑end demo (load ➜ predict ➜ plot)
-├── notebooks/                 # Interactive Jupyter notebooks
-│   └── brain_age_workflow.ipynb
-├── requirements.txt           # Lightweight pip spec (see below)
-├── environment.yml            # Reproducible Conda env (GPU, CUDA 12.1)
-├── LICENSE                    # BSD‑3‑Clause
-└── README.md                  # You are here 📑
-```
+| File                                   | Role                                                                                                                                      |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `densenet3d.py`                        | 3-D DenseNet-121 (growth-32, compression 0.5) exactly as described in the manuscript.                                                     |
+| `main.py`                              | Command-line script for **training** (`train` mode) or **inference** (`predict` mode) with early-stopping, LR decay and MAE/R² reporting. |
+| `requirements.txt` / `environment.yml` | Pinned package versions (Python 3.11, CUDA 12.1, PyTorch 2.1.1, etc.).                                                                    |
+| `demo/`                                | Minimal example data & weights (add later).                                                                                     |
+
+> Raw MRI and biomarker data are **not redistributed**. Users must obtain them from ADNI, NACC, AIBL, CamCAN and HCP-A under their respective licences.
 
 ---
 
 ## 🔧 Installation
 
-### 1. Clone repo & create Conda env
-
 ```bash
-conda env create -f environment.yml  # ≈10 min on a laptop
-conda activate bacpdl
+conda env create -f environment.yml      # creates "brainage" env ▸ ~10 min
+conda activate brainage
 ```
 
-### 2. Install extra system packages (Ubuntu 20.04+)
+or, without Conda:
 
 ```bash
-sudo apt-get install -y ants
+python -m venv venv && source venv/bin/activate
+pip install -r requirements.txt
 ```
 
-> **Tip** A Dockerfile is provided in `extras/` if you prefer containers.
+A CUDA 12.1-capable GPU (≥ 12 GB VRAM) is recommended for training but **not required** for inference.
 
 ---
 
-## 🏃 Quick‑start Demo  (≤ 60 s on CPU)
+## 🏃 Quick start
+
+### 1 · Training from scratch
 
 ```bash
-python demo/run_demo.py --img demo/sample_T1.nii.gz \
-                        --weights checkpoints/densenet3d_cu.pth
+python main.py train \
+    --x_train data/x_train.npy --y_train data/age_train.npy \
+    --x_val   data/x_val.npy   --y_val   data/age_val.npy   \
+    --outdir  checkpoints
 ```
 
-Output ⇢ JSON with predicted age, BAG, and a sagittal saliency overlay PNG.
+`main.py` will iterate 5×15 epochs with LR decay 0.7 and early-stop once validation MAE plateaus, saving `checkpoints/best_model.pt`.
 
----
-
-## 🧠 Training From Scratch
+### 2 · Inference
 
 ```bash
-python src/train_brainage.py \
-       --train_csv data/cu_train.csv \
-       --val_csv   data/cu_val.csv   \
-       --epochs 75 --batch 8 --gpu 0
+python main.py predict \
+    --x_test data/x_test.npy \
+    --weights checkpoints/best_model.pt \
+    --y_test data/age_test.npy   # optional → prints MAE & R²
 ```
 
----
-
-## 📊 Reproducing Manuscript Figures
-
-1. Follow *Training From Scratch* or download released weights.
-2. Run `predict_brainage.py` on each pathology CSV.
-3. Execute `analysis/plot_paper_figures.py` to regenerate Figs 2–5.
-
-Full provenance scripts are in `analysis/` and are invoked by `make all`.
+Predictions are saved to `predictions.npy`.
 
 ---
 
-## 📈 Requirements (software)
+## 📈 Package versions
 
-Core: `python==3.11`, `torch==2.1`, `nibabel==5.1`, `scikit‑learn==1.5`, `scipy==1.11`, `statsmodels==0.14`, `nilearn==0.10`.
+Core stack (see `requirements.txt` for full list & exact pins):
 
-See `requirements.txt` / `environment.yml` for pinned versions.
-
-Hardware:
-
-* GPU with ≥12 GB VRAM for training (tested on NVIDIA A100).
-
----
-
-## 🗄️ Data Access & Pre‑processing
-
-| Cohort | URL / DOI                                                                | Licence            |
-| ------ | ------------------------------------------------------------------------ | ------------------ |
-| ADNI   | [https://adni.loni.usc.edu](https://adni.loni.usc.edu)                   | Data‑use agreement |
-| NACC   | [https://naccdata.org](https://naccdata.org)                             | Data‑use agreement |
-| AIBL   | [https://aibl.csiro.au](https://aibl.csiro.au)                           | Data‑use agreement |
-| CamCAN | [https://doi.org/10.17863/CAM.16671](https://doi.org/10.17863/CAM.16671) | CC BY‑NC‑SA 4.0    |
-| HCP‑A  | [https://doi.org/10.15154/1520707](https://doi.org/10.15154/1520707)     | Custom DUA         |
-
-Pre‑processing is fully automated via `preprocessing/run_freesurfer_pipe.sh` plus affine MNI registration with ANTs.
+* Python 3.11
+* PyTorch 2.1.1 + CUDA 12.1
+* NumPy 1.26 · SciPy 1.11 · scikit-learn 1.5 
 
 ---
 
 ## 🔍 Interpretability
 
-`saliency.py` implements gradient saliency & Gaussian smoothing to map voxel‑level contributions.
-
----
-
-## 📑 Citation
-
-Please cite both the **paper** and this **software**:
-
-```bibtex
-@article{ahmadi2025copath,
-  title   = {Lewy-body co-pathology exacerbates deep-learning brain-age and accelerates neurodegeneration},
-  author  = {Ahmadi, B. et al.},
-  journal = {Nature Communications},
-  year    = {2025}
-}
-```
+The convolutional class-activation map (CAM) head in `densenet3d.py` feeds saliency analysis identical to Fig. 3 in the manuscript. An example notebook will be added under `notebooks/` once the manuscript is accepted.
 
 ---
 
 ## 📄 License
 
-BSD‑3‑Clause. See `LICENSE` for details.
+BSD-3-Clause. See `LICENSE`.
 
 ---
 
 ## 📬 Contact
 
-For questions, please open an issue or email **Babak Ahmadi** [babak.ahmadi@ufl.edu](mailto:babak.ahmadi@ufl.edu).
-
+Questions or issues → open a GitHub issue or email **Babak Ahmadi** [babak.ahmadi@ufl.edu](mailto:babak.ahmadi@ufl.edu).
