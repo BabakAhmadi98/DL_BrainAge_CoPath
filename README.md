@@ -1,4 +1,4 @@
-# DL\_BrainAge\_CoPath
+# DL\_BrainAge\_CoPath (TO BE UPDATED...)
 
 A compact deep learning pipeline that predicts **brain age** from 3D T1-weighted MRI. It is further used to quantify how combined Alzheimer’s disease (AD) and Lewy body (LB) pathology accelerates structural ageing.
 
