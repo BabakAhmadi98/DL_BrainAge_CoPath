@@ -1,6 +1,6 @@
 # DL\_BrainAge\_CoPath
 
-A compact PyTorch pipeline that predicts **brain age** from 3-D T1-weighted MRI. It is further used to quantify how combined Alzheimer’s-disease (AD) and Lewy-body (LB) pathology accelerates structural ageing.
+A compact deep learning pipeline that predicts **brain age** from 3D T1-weighted MRI. It is further used to quantify how combined Alzheimer’s disease (AD) and Lewy body (LB) pathology accelerates structural ageing.
 
 ---
 
@@ -11,7 +11,7 @@ A compact PyTorch pipeline that predicts **brain age** from 3-D T1-weighted MRI.
 | `densenet3d.py`                        | 3-D DenseNet-121 (growth-32, compression 0.5) exactly as described in the manuscript.                                                     |
 | `main.py`                              | Command-line script for **training** (`train` mode) or **inference** (`predict` mode) with early-stopping, LR decay and MAE/R² reporting. |
 | `requirements.txt` / `environment.yml` | Pinned package versions (Python 3.11, CUDA 12.1, PyTorch 2.1.1, etc.).                                                                    |
-| `demo/`                                | Minimal example data & weights (add later).                                                                                     |
+| `demo/`                                | Minimal example data & weights (will be added later).                                                                                     |
 
 > Raw MRI and biomarker data are **not redistributed**. Users must obtain them from ADNI, NACC, AIBL, CamCAN and HCP-A under their respective licences.
 
@@ -73,7 +73,7 @@ Core stack (see `requirements.txt` for full list & exact pins):
 
 ## 🔍 Interpretability
 
-The convolutional class-activation map (CAM) head in `densenet3d.py` feeds saliency analysis identical to Fig. 3 in the manuscript. An example notebook will be added under `notebooks/` once the manuscript is accepted.
+An example notebook will be added under `notebooks/` once the manuscript is accepted.
 
 ---
 
